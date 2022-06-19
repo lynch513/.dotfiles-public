@@ -219,13 +219,13 @@ g.mapleader = ' '
 g.maplocalleader = ' '
 
 -- Set line numbers
-map('n', '<leader>n', ':set invnumber<CR>', { noremap = false, silent = false })
+map('n', '<leader>sn', ':set invnumber<CR>', { noremap = false, silent = true })
 
 -- Show invisible chars
-map('n', '<leader>l', ':set list!<CR>', { noremap = false, silent = false })
+map('n', '<leader>sc', ':set list!<CR>', { noremap = false, silent = true })
 
 -- Spell checking
-map('n', '<F7>', ':set spell!<CR>', { noremap = false, silent = false })
+map('n', '<F7>', ':set spell!<CR>', { noremap = false, silent = true })
 
 --------------------------------------------------------------------------------------------
 --| # Settings
@@ -289,15 +289,24 @@ cmd 'colorscheme nord'
 opt.expandtab = true      -- use spaces instead of tabs
 opt.shiftwidth = 4        -- shift 4 spaces when tab
 opt.tabstop = 4           -- 1 tab == 4 spaces
+opt.softtabstop = 4
 opt.smartindent = true    -- autoindent new lines
+
 -- don't auto commenting new lines
 cmd [[au BufEnter * set fo-=c fo-=r fo-=o]]
 -- remove line lenght marker for selected filetypes
 cmd [[autocmd FileType text,markdown,html,xhtml,javascript setlocal cc=0]]
 -- 2 spaces for selected filetypes
-cmd [[
-autocmd FileType xml,html,xhtml,css,scss,javascript,lua,yaml,htmljinja setlocal shiftwidth=2 tabstop=2
-]]
+cmd 'autocmd Filetype ruby setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2'
+cmd 'autocmd Filetype javascript setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2'
+cmd 'autocmd Filetype javascriptreact setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2'
+cmd 'autocmd Filetype yaml setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2'
+cmd 'autocmd Filetype xml setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2'
+cmd 'autocmd Filetype html setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2'
+cmd 'autocmd Filetype xhtml setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2'
+cmd 'autocmd Filetype css setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2'
+cmd 'autocmd Filetype scss setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2'
+cmd 'autocmd Filetype lua setlocal expandtab tabstop=2 shiftwidth=2 softtabstop=2'
 
 opt.list = true
 opt.listchars:append('lead:⋅')
