@@ -110,7 +110,18 @@ require('packer').startup(function()
   ----------------------------------------------------------------------------------------
   --| ### Add git related info in the sign columns and popups
   ----------------------------------------------------------------------------------------
-  use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } }
+  use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' },
+  config = function()
+    require('gitsigns').setup {
+      signs = {
+        add = { hl = 'GitGutterAdd', text = '+' },
+        change = { hl = 'GitGutterChange', text = '~' },
+        delete = { hl = 'GitGutterDelete', text = '_' },
+        topdelete = { hl = 'GitGutterDelete', text = '‾' },
+        changedelete = { hl = 'GitGutterChange', text = '~' },
+      }
+    }
+  end, }
 
   ----------------------------------------------------------------------------------------
   --| ## LSP и автодополнялка
@@ -290,30 +301,6 @@ autocmd FileType xml,html,xhtml,css,scss,javascript,lua,yaml,htmljinja setlocal 
 
 opt.list = true
 opt.listchars:append('lead:⋅')
-
---------------------------------------------------------------------------------------------
---| ## Highlight trailing whitespaces
---------------------------------------------------------------------------------------------
--- cmd[[ highlight ExtraWhitespace ctermbg=red guibg=red
--- match ExtraWhitespace /\s\+$/
--- autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
--- autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
--- autocmd InsertLeave * match ExtraWhitespace /\s\+$/
--- autocmd BufWinLeave * call clearmatches() ]]
-
---------------------------------------------------------------------------------------------
---| ## Gitsigns
---------------------------------------------------------------------------------------------
-
-require('gitsigns').setup {
-  signs = {
-    add = { hl = 'GitGutterAdd', text = '+' },
-    change = { hl = 'GitGutterChange', text = '~' },
-    delete = { hl = 'GitGutterDelete', text = '_' },
-    topdelete = { hl = 'GitGutterDelete', text = '‾' },
-    changedelete = { hl = 'GitGutterChange', text = '~' },
-  }
-}
 
 --------------------------------------------------------------------------------------------
 --| ## Полезные фишки
