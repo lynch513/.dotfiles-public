@@ -56,7 +56,9 @@ require('packer').startup(function()
   use { 'nvim-telescope/telescope.nvim',
   requires = { { 'nvim-lua/popup.nvim' }, { 'nvim-lua/plenary.nvim' } },
   config = function()
-      require('telescope').setup()
+      require('telescope').setup {
+        file_ignore_patterns = { "node_modules" }
+      }
   end, }
   ----------------------------------------------------------------------------------------
   --| ### Icons
@@ -93,9 +95,7 @@ require('packer').startup(function()
   ----------------------------------------------------------------------------------------
   use { 'kyazdani42/nvim-tree.lua', requires = 'kyazdani42/nvim-web-devicons',
   config = function()
-    require('nvim-tree').setup {
-      open_on_tab = true,
-    }
+    require('nvim-tree').setup { }
   end, }
   ----------------------------------------------------------------------------------------
   --| ### Навигация внутри файла по классам и функциям
