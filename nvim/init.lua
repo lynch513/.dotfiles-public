@@ -1,3 +1,9 @@
+--------------------------------------------------------------------------------------------
+-- An example for a nvim/init.lua file (Neovim edition)
+--   Maintainer: lynch513@yandex.ru
+--------------------------------------------------------------------------------------------
+-- Reload this config file -> :so %
+
 local cmd = vim.cmd             -- execute Vim commands
 local fn = vim.fn
 local exec = vim.api.nvim_exec  -- execute Vimscript
@@ -48,8 +54,10 @@ require('packer').startup(function()
   --| ### Fuzzy search
   ----------------------------------------------------------------------------------------
   use { 'nvim-telescope/telescope.nvim',
-  requires = { { 'nvim-lua/popup.nvim' }, { 'nvim-lua/plenary.nvim' } }
-  }
+  requires = { { 'nvim-lua/popup.nvim' }, { 'nvim-lua/plenary.nvim' } },
+  config = function()
+      require('telescope').setup()
+  end, }
   ----------------------------------------------------------------------------------------
   --| ### Icons
   ----------------------------------------------------------------------------------------
@@ -201,14 +209,14 @@ end)
 -- map('i', 'jj', '<Esc>', {noremap = true})
 
 -- Tabs and buffets keymaps
--- map('n', '[b', ':bprevious', {noremap = true, silent = true})
-map('n', ']b', ':bnext', { noremap = true, silent = true })
-map('n', '[t', ':tabprevious', { noremap = true, silent = true })
-map('n', ']t', ':tabnext', { noremap = true, silent = true })
+map('n', '[b', ':bprevious<CR>', {noremap = true, silent = true})
+map('n', ']b', ':bnext<CR>', { noremap = true, silent = true })
+map('n', '[t', ':tabprevious<CR>', { noremap = true, silent = true })
+map('n', ']t', ':tabnext<CR>', { noremap = true, silent = true })
 
 -- Add empty lines
-map('n', ']<Space>', 'm`o<Esc>`', { noremap = true, silent = true })
-map('n', '[<Space>', 'm`O<Esc>`', { noremap = true, silent = true })
+-- map('n', ']<Space>', 'm`o<Esc>`', { noremap = true, silent = true })
+-- map('n', '[<Space>', 'm`O<Esc>`', { noremap = true, silent = true })
 
 -- Remap Esc
 map('i', '<C-l>', '<Esc>', { noremap = true, silent = true })
@@ -224,8 +232,23 @@ map('n', '<leader>sn', ':set invnumber<CR>', { noremap = false, silent = true })
 -- Show invisible chars
 map('n', '<leader>sc', ':set list!<CR>', { noremap = false, silent = true })
 
+-- Strip whitespaces
+map('n', '<leader>ss', ':StripWhitespace<CR>', { noremap = true, silent = true })
+
 -- Spell checking
 map('n', '<F7>', ':set spell!<CR>', { noremap = false, silent = true })
+
+-- No highlight
+map('n', '<leader>/', ':noh<CR>', { noremap = true, silent = true })
+
+-- telescope settings
+map('n', '<leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], { noremap = true, silent = true })
+map('n', '<leader>ff', [[<cmd>lua require('telescope.builtin').find_files({ find_command = {'rg', '--files', '--hidden', '-g', '!.git' }})<CR>]], { noremap = true, silent = true })
+map('n', '<C-f>', [[<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>]], { noremap = true, silent = true })
+map('n', '<leader>lg', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], { noremap = true, silent = true })
+
+-- NvimTree
+map('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
 
 --------------------------------------------------------------------------------------------
 --| # Settings
@@ -352,59 +375,134 @@ g.ale_lint_on_text_changed = 'never'
 g.ale_lint_on_insert_leave = 0
 
 --------------------------------------------------------------------------------------------
---| ## Установки для плагинов
+--| ## LSP settings
 --------------------------------------------------------------------------------------------
 
--- LSP settings
-local lsp_installer = require("nvim-lsp-installer")
-lsp_installer.on_server_ready(function(server)
-  local opts = {}
-  if server.name == "sumneko_lua" then
-    -- only apply these settings for the "sumneko_lua" server
-    opts.settings = {
-      Lua = {
-        diagnostics = {
-          -- Get the language server to recognize the 'vim', 'use' global
-          globals = {'vim', 'use'},
-        },
-        workspace = {
-          -- Make the server aware of Neovim runtime files
-          library = vim.api.nvim_get_runtime_file("", true),
-        },
-        -- Do not send telemetry data containing a randomized but unique identifier
-        telemetry = {
-          enable = false,
-        },
-      },
-    }
-  end
-  server:setup(opts)
-end)
+local nvim_lsp = require 'lspconfig'
 
+local on_attach = function(_, bufnr)
+  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+  local opts = { noremap = true, silent = true }
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'v', '<leader>ca', '<cmd>lua vim.lsp.buf.range_code_action()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>so', [[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]], opts)
+  vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
+end
 
--- nvim-cmp supports additional completion capabilities
+-- Add additional capabilities supported by nvim-cmp
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
-vim.o.completeopt = 'menuone,noselect'
--- luasnip setup
-local luasnip = require 'luasnip'
--- nvim-cmp setup
-local cmp = require 'cmp'
-cmp.setup {
-  snippet = {
-    expand = function(args)
-      luasnip.lsp_expand(args.body)
-    end,
+
+-- Enable some language servers with the additional completion capabilities offered by nvim-cmp
+local servers = { 'solargraph', 'intelephense' }
+for _, lsp in ipairs(servers) do
+  nvim_lsp[lsp].setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+  }
+end
+
+-- Treesitter configuration
+-- Parsers must be installed manually via :TSInstall
+require('nvim-treesitter.configs').setup {
+  highlight = {
+    enable = true, -- false will disable the whole extension
   },
-  sources = {
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
-    { name = 'path' },
-    { name = 'buffer', opts = {
-      get_bufnrs = function()
-        return vim.api.nvim_list_bufs()
-      end
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = 'gnn',
+      node_incremental = 'grn',
+      scope_incremental = 'grc',
+      node_decremental = 'grm',
     },
   },
-},
+  indent = {
+    enable = true,
+  },
+  textobjects = {
+    select = {
+      enable = true,
+      lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+      keymaps = {
+        -- You can use the capture groups defined in textobjects.scm
+        ['af'] = '@function.outer',
+        ['if'] = '@function.inner',
+        ['ac'] = '@class.outer',
+        ['ic'] = '@class.inner',
+      },
+    },
+    move = {
+      enable = true,
+      set_jumps = true, -- whether to set jumps in the jumplist
+      goto_next_start = {
+        [']m'] = '@function.outer',
+        [']]'] = '@class.outer',
+      },
+      goto_next_end = {
+        [']M'] = '@function.outer',
+        [']['] = '@class.outer',
+      },
+      goto_previous_start = {
+        ['[m'] = '@function.outer',
+        ['[['] = '@class.outer',
+      },
+      goto_previous_end = {
+        ['[M'] = '@function.outer',
+        ['[]'] = '@class.outer',
+      },
+    },
+  },
 }
+
+-- Set completeopt to have a better completion experience
+vim.o.completeopt = 'menu,menuone,noselect'
+
+local cmp = require'cmp'
+
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body)
+    end,
+  },
+  mapping = {
+    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ["<C-j>"] = cmp.mapping.select_next_item({behavior = cmp.SelectBehavior.Insert}),
+    ["<C-k>"] = cmp.mapping.select_prev_item({behavior = cmp.SelectBehavior.Insert}),
+    ["<Tab>"] = cmp.mapping(cmp.mapping.select_next_item(), {"i", "s"}),
+    ["<S-Tab>"] = cmp.mapping(cmp.mapping.select_prev_item(), {"i", "s"}),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  },
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+  }, {
+    { name = 'buffer' },
+  })
+})
+
+-- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline('/', {
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(':', {
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  })
+})
+
