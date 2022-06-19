@@ -69,6 +69,7 @@ require('packer').startup(function()
   -- use 'shaunsingh/solarized.nvim'
   use 'shaunsingh/nord.nvim'
   use 'shaunsingh/moonlight.nvim'
+  use 'lunarvim/darkplus.nvim'
   ----------------------------------------------------------------------------------------
   --| ### Информационная строка внизу
   ----------------------------------------------------------------------------------------
@@ -85,15 +86,17 @@ require('packer').startup(function()
   ----------------------------------------------------------------------------------------
   use { 'akinsho/bufferline.nvim', requires = 'kyazdani42/nvim-web-devicons',
   config = function()
-    require("bufferline").setup{}
+    require('bufferline').setup{}
   end, }
   ----------------------------------------------------------------------------------------
   --| ### Файловый менеджер
   ----------------------------------------------------------------------------------------
-  use { 'kyazdani42/nvim-tree.lua',
-    requires = 'kyazdani42/nvim-web-devicons',
-    config = function() require'nvim-tree'.setup {} end,
-  }
+  use { 'kyazdani42/nvim-tree.lua', requires = 'kyazdani42/nvim-web-devicons',
+  config = function()
+    require('nvim-tree').setup {
+      open_on_tab = true,
+    }
+  end, }
   ----------------------------------------------------------------------------------------
   --| ### Навигация внутри файла по классам и функциям
   ----------------------------------------------------------------------------------------
@@ -189,9 +192,6 @@ require('packer').startup(function()
   use 'tpope/vim-repeat'
   -- Стартовая страница, если просто набрать vim в консоле
   use 'mhinz/vim-startify'
-  -- Комментирует по gc все, вне зависимости от языка программирования
-  -- use { 'numToStr/Comment.nvim',
-  -- config = function() require('Comment').setup() end, }
   -- Обрамляет строку в теги по ctrl- y + ,
   use 'mattn/emmet-vim'
   -- Закрывает автоматом скобки
@@ -248,7 +248,7 @@ map('n', '<C-f>', [[<cmd>lua require('telescope.builtin').current_buffer_fuzzy_f
 map('n', '<leader>lg', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], { noremap = true, silent = true })
 
 -- NvimTree
-map('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
+map('n', '<C-n>', ':NvimTreeFindFileToggle<CR>', { noremap = true, silent = true })
 
 --------------------------------------------------------------------------------------------
 --| # Settings
