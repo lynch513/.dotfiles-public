@@ -82,10 +82,10 @@ require('packer').startup(function()
   ----------------------------------------------------------------------------------------
   --| ### Файловый менеджер
   ----------------------------------------------------------------------------------------
-  -- use { 'kyazdani42/nvim-tree.lua',
-  --     requires = 'kyazdani42/nvim-web-devicons',
-  --     config = function() require'nvim-tree'.setup {} end,
-  -- }
+  use { 'kyazdani42/nvim-tree.lua',
+    requires = 'kyazdani42/nvim-web-devicons',
+    config = function() require'nvim-tree'.setup {} end,
+  }
   ----------------------------------------------------------------------------------------
   --| ### Навигация внутри файла по классам и функциям
   ----------------------------------------------------------------------------------------
@@ -118,9 +118,12 @@ require('packer').startup(function()
 
   -- Highlight, edit, and navigate code using a fast incremental parsing library
   use 'nvim-treesitter/nvim-treesitter'
+  -- Additional textobjects for treesitter
+  use 'nvim-treesitter/nvim-treesitter-textobjects'
   -- Collection of configurations for built-in LSP client
   use 'neovim/nvim-lspconfig'
   use 'williamboman/nvim-lsp-installer'
+
   -- Автодополнялка
   use 'hrsh7th/nvim-cmp'
   use 'hrsh7th/cmp-nvim-lsp'
@@ -130,12 +133,15 @@ require('packer').startup(function()
   use 'hrsh7th/cmp-path'
   -- Snippets plugin
   use 'L3MON4D3/LuaSnip'
+  use 'hrsh7th/cmp-cmdline'
+  use "rafamadriz/friendly-snippets"
 
   ----------------------------------------------------------------------------------------
   -- ## HTML и CSS
   ----------------------------------------------------------------------------------------
 
-  -- Подсвечивает закрывающий и откры. тэг. Если, где-то что-то не закрыто, то не подсвечивает.
+  -- Подсвечивает закрывающий и открывающий тэг.
+  -- Если, где-то что-то не закрыто, то не подсвечивает.
   use 'idanarye/breeze.vim'
   -- Закрывает автоматом html и xml тэги. Пишешь <h1> и он автоматом закроется </h1>
   use 'alvan/vim-closetag'
@@ -173,6 +179,8 @@ require('packer').startup(function()
   use 'cohama/lexima.vim'
   -- Линтер, работает для всех языков
   use 'dense-analysis/ale'
+  -- Highlight trailing whitespaces
+  use 'ntpeters/vim-better-whitespace'
 end)
 
 --------------------------------------------------------------------------------------------
@@ -216,7 +224,7 @@ map('n', '<F7>', ':set spell!<CR>', { noremap = false, silent = false })
 --| ## Главные
 --------------------------------------------------------------------------------------------
 
-opt.inccommand = 'nosplit'        -- show the effects of a command increntally in the buffer
+opt.inccommand = 'nosplit'        -- show the effects of a command incrementally in the buffer
 opt.hlsearch = true               -- set highlight on search
 opt.hidden = true                 -- do not save when switching buffers
 -- opt.mouse = 'a'                   -- enable mouse mode
@@ -286,12 +294,12 @@ opt.listchars:append('lead:⋅')
 --------------------------------------------------------------------------------------------
 --| ## Highlight trailing whitespaces
 --------------------------------------------------------------------------------------------
-cmd[[ highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-autocmd BufWinLeave * call clearmatches() ]]
+-- cmd[[ highlight ExtraWhitespace ctermbg=red guibg=red
+-- match ExtraWhitespace /\s\+$/
+-- autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+-- autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+-- autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+-- autocmd BufWinLeave * call clearmatches() ]]
 
 --------------------------------------------------------------------------------------------
 --| ## Gitsigns
