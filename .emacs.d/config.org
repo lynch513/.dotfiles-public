@@ -1,0 +1,113 @@
+ #+TITLE: Emacs config
+ #+AUTHOR: lynch513@yandex.ru
+
+* Package Management
+
+** Setup package.el to work with MELPA
+
+    #+begin_src emacs-lisp
+      (require 'package)
+      (add-to-list 'package-archives
+		   '("melpa" . "https://melpa.org/packages/"))
+      (package-refresh-contents)
+      (package-initialize)
+    #+end_src
+
+** Installing use-package
+
+    #+begin_src emacs-lisp
+      (unless (package-installed-p 'use-package)
+	(package-install 'use-package))
+    #+end_src
+
+* General Keybindings
+
+    #+begin_src emacs-lisp
+      (use-package general
+	:ensure t
+	:config
+	(general-evil-setup t))
+    #+end_src
+
+* Evil Mode
+
+   #+begin_src emacs-lisp
+     (use-package evil
+       :ensure t ;; install if not installed
+       :init     ;; tweak evil's configuration before loading it
+       (setq evil-want-integration t)
+       (setq evil-want-keybinding nil)
+       (setq evil-vsplit-window-right t)
+       (setq evil-split-window-below t)
+       (evil-mode))
+     (use-package evil-collection
+       :after evil
+       :ensure t
+       :config
+       (evil-collection-init))
+   #+end_src
+
+* Fonts
+
+   #+begin_src emacs-lisp
+     (set-face-attribute 'default nil
+			 :font "SauceCodePro Nerd Font 11"
+			 :weight 'light)
+     (set-face-attribute 'variable-pitch nil
+			 :font "SauceCodePro Nerd Font 11"
+			 :weight 'light)
+     (set-face-attribute 'fixed-pitch nil
+			 :font "SauceCodePro Nerd Font 11"
+			 :weight 'light)
+     (setq-default line-spacing 0.10)
+     ;; Needed if using emacsclient. Otherwise, your fonts will be smaller than expected
+     (add-to-list 'default-frame-alist '(font . "SauceCodePro Nerd Font 11"))
+   #+end_src
+
+** Zooming In and Out
+
+   #+begin_src emacs-lisp
+     (global-set-key (kbd "C-=") 'text-scale-increase)
+     (global-set-key (kbd "C--") 'text-scale-decrease)
+   #+end_src
+
+* Graphical User Interface Settings
+   
+** Menu, Toolbar and Scrollbar
+
+   #+begin_src emacs-lisp
+     (menu-bar-mode t)
+     (tool-bar-mode -1)
+     (scroll-bar-mode -1)
+   #+end_src
+
+** Line Numbers and Truncated Lines
+
+   #+begin_src emacs-lisp
+     (global-display-line-numbers-mode 1)
+     (global-visual-line-mode t)
+   #+end_src
+   
+* Theme
+
+   #+begin_src emacs-lisp
+     (use-package doom-themes
+       :ensure t)
+     (setq doom-themes-enable-bold t
+	   doom-themes-enable-italic t)
+     (load-theme 'doom-one t)
+   #+end_src
+
+   #+begin_src emacs-lisp
+     (use-package doom-modeline
+       :ensure t)
+     (doom-modeline-mode 1)
+   #+end_src
+   
+* Which Key
+
+   #+begin_src emacs-lisp
+     (use-package which-key
+       :ensure t)
+     (which-key-mode)
+   #+end_src
