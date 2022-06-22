@@ -132,11 +132,11 @@
 
    #+begin_src emacs-lisp
      (set-face-attribute 'default nil
-			 :font "SauceCodePro Nerd Font"
+			 :font "JetBrainsMono NF"
 			 :height 110
 			 :weight 'light)
      (set-face-attribute 'variable-pitch nil
-			 :font "SauceCodePro Nerd Font"
+			 :font "JetBrainsMono NF"
 			 :height 110
 			 :weight 'light)
      (set-face-attribute 'fixed-pitch nil
@@ -144,11 +144,11 @@
 			 :height 110
 			 :weight 'light)
      ;; Makes commented text and keywords italics
-     ;;(set-face-attribute 'font-lock-comment-face nil :slant 'italic)
-     ;;(set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
+     (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
+     (set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
      (setq-default line-spacing 0.12)
      ;; Needed if using emacsclient. Otherwise, your fonts will be smaller than expected
-     (add-to-list 'default-frame-alist '(font . "SauceCodePro Nerd Font 11"))
+     (add-to-list 'default-frame-alist '(font . "JetBrainsMono NF 11"))
    #+end_src
 
 ** Zooming In and Out
