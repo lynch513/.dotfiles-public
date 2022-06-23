@@ -131,17 +131,18 @@
 ** Fonts
 
    #+begin_src emacs-lisp
+     (defvar efs/default-font-size 110)
      (set-face-attribute 'default nil
 			 :font "JetBrainsMono NF"
-			 :height 110
+			 :height efs/default-font-size
 			 :weight 'light)
      (set-face-attribute 'variable-pitch nil
 			 :font "JetBrainsMono NF"
-			 :height 110
+			 :height efs/default-font-size
 			 :weight 'light)
      (set-face-attribute 'fixed-pitch nil
 			 :font "SauceCodePro Nerd Font"
-			 :height 110
+			 :height efs/default-font-size
 			 :weight 'light)
      ;; Makes commented text and keywords italics
      (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
@@ -158,6 +159,12 @@
      (global-set-key (kbd "C--") 'text-scale-decrease)
    #+end_src
 
+** Start in maximized mode
+   
+   #+begin_src emacs-lisp
+     (add-hook 'emacs-startup-hook 'toggle-frame-maximized)
+   #+end_src
+
 ** Menu, Toolbar and Scrollbar
 
    #+begin_src emacs-lisp
@@ -171,6 +178,24 @@
    #+begin_src emacs-lisp
      (global-display-line-numbers-mode 1)
      (global-visual-line-mode t)
+   #+end_src
+
+   Disable line numbers for some models
+
+   #+begin_src emacs-lisp
+     (dolist (mode '(org-mode-hook
+		     term-mode-hook
+		     shell-mode-hook
+		     treemacs-mode-hook
+		     eshell-mode-hook))
+       (add-hook mode (lambda () (display-line-numbers-mode 0))))
+   #+end_src
+
+** Comments
+
+   #+begin_src emacs-lisp
+     (use-package evil-nerd-commenter
+       :bind ("C-/" . evilnc-comment-or-uncomment-lines))
    #+end_src
    
 ** Theme
@@ -269,6 +294,14 @@
      (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
    #+end_src
 
+* Vertico
+
+   #+begin_src emacs-lisp
+     (use-package vertico
+       :init
+       (vertico-mode))
+   #+end_src
+
 * Delete Selection Mode
 
    #+begin_src emacs-lisp
@@ -308,7 +341,26 @@
 Remap Escape key to Ctrl-L in evil mode
 
    #+begin_src emacs-lisp
-     (define-key evil-insert-state-map (kbd "C-l") 'evil-normal-state)
+     ;; (define-key evil-insert-state-map (kbd "C-l") 'evil-normal-state)
+     ;;; C-c as general purpose escape key sequence.
+     ;;;
+     (defun my-esc (prompt)
+       "Functionality for escaping generally.  Includes exiting Evil insert state and C-g binding. "
+       (cond
+	;; If we're in one of the Evil states that defines [escape] key, return [escape] so as
+	;; Key Lookup will use it.
+	((or (evil-insert-state-p) (evil-normal-state-p) (evil-replace-state-p) (evil-visual-state-p)) [escape])
+	;; This is the best way I could infer for now to have C-c work during evil-read-key.
+	;; Note: As long as I return [escape] in normal-state, I don't need this.
+	;;((eq overriding-terminal-local-map evil-read-key-map) (keyboard-quit) (kbd ""))
+	(t (kbd "C-g"))))
+     (define-key key-translation-map (kbd "C-l") 'my-esc)
+     ;; Works around the fact that Evil uses read-event directly when in operator state, which
+     ;; doesn't use the key-translation-map.
+     (define-key evil-operator-state-map (kbd "C-l") 'keyboard-quit)
+     ;; Not sure what behavior this changes, but might as well set it, seeing the Elisp manual's
+     ;; documentation of it.
+     (set-quit-char "C-l")
    #+end_src
 
 ** Buffers and Bookmarks
