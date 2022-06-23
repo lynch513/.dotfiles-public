@@ -298,8 +298,36 @@
 
    #+begin_src emacs-lisp
      (use-package vertico
+       :bind (:map vertico-map
+		   ("C-j" . vertico-next)
+		   ("C-k" . vertico-previous)
+		   ("C-f" . vertico-exit)
+		   :map minibuffer-local-map
+		   ("M-h" . backward-kill-word))
+       :custom
+       (vertico-cycle t)
        :init
        (vertico-mode))
+   #+end_src
+
+   Save file search history
+
+   #+begin_src emacs-lisp
+     ;; (use-package savehist
+     ;;   :init
+     ;;   (savehist-mode))
+   #+end_src
+
+   Emproving vertico info buffer 
+   
+   #+begin_src emacs-lisp
+     (use-package marginalia
+       :after vertico
+       :ensure t
+       :custom
+       (marginalia-annotatos '(marginalia-annotators-heavy marginalia-annotators-light nil))
+       :init
+       (marginalia-mode))
    #+end_src
 
 * Delete Selection Mode
@@ -367,12 +395,13 @@ Remap Escape key to Ctrl-L in evil mode
 
    #+begin_src emacs-lisp
      (nvmap :states '(normal visual) :keymaps 'override :prefix "SPC"
-       "b b" '(ibuffer :which-key "Ibuffer")
+       ;; "b b" '(ibuffer :which-key "Ibuffer")
+       "b b" '(switch-to-buffer :whick-key "Switch to buffer")
        "b c" '(clone-indirect-buffer-other-window :which-key "Clone indirect buffer other window")
        "b k" '(kill-current-buffer :whick-key "Kill current buffer")
        "b n" '(next-buffer :which-key "Next buffer")
        "b p" '(previous-buffer :which-key "Previous buffer")
-       "b B" '(ibuffer-list-buffers :which-key "Ibuffer list buffers")
+       ;; "b B" '(ibuffer-list-buffers :which-key "Ibuffer list buffers")
        "b K" '(kill-buffer :which-key "Kill buffer"))
    #+end_src
 
