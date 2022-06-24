@@ -21,6 +21,13 @@
       (setq use-package-always-ensure t)
     #+end_src
 
+* Language Environment
+
+    #+begin_src emacs-lisp
+      (set-language-environment "UTF-8")
+      (set-default-coding-systems 'utf-8)
+    #+end_src
+
 * General Keybindings
 
     #+begin_src emacs-lisp
