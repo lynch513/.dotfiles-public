@@ -320,9 +320,9 @@
    Save file search history
 
    #+begin_src emacs-lisp
-     ;; (use-package savehist
-     ;;   :init
-     ;;   (savehist-mode))
+     (use-package savehist
+       :init
+       (savehist-mode))
    #+end_src
 
    Emproving vertico info buffer 
@@ -332,10 +332,61 @@
        :after vertico
        :ensure t
        :custom
-       (marginalia-annotatos '(marginalia-annotators-heavy marginalia-annotators-light nil))
+       (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
        :init
        (marginalia-mode))
    #+end_src
+
+* Completion systems
+
+** Orderless
+
+Fuzzy search everywhere
+
+   #+begin_src emacs-lisp
+     (use-package orderless
+       :init
+       (setq completion-styles '(orderless basic)
+	     completion-category-defaults nil
+	     completion-category-overrides '((file (styles basic partial-completion)))))
+   #+end_src
+
+** Consult
+
+Some UI. See: consult-line, consult-imenu end others commands
+
+   #+begin_src emacs-lisp
+     (use-package consult
+       :init
+       (setq completion-in-region-function #'consult-completion-in-region))
+   #+end_src
+
+** Embark
+
+Simple press Ctrl-. for default action on target
+
+   #+begin_src emacs-lisp
+     (use-package embark
+       :ensure t
+       :init
+       ;; Optionally replace the key help with a completing-read interface
+       (setq prefix-help-command #'embark-prefix-help-command)
+       :config
+       ;; Hide the mode line of the Embark live/completions buffers
+       (add-to-list 'display-buffer-alist
+		    '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+		      nil
+		      (window-parameters (mode-line-format . none)))))
+     ;; Consult users will also want the embark-consult package.
+     (use-package embark-consult
+       :ensure t
+       :after (embark consult)
+       :demand t ; only necessary if you have the hook below
+       ;; if you want to have consult previews as you move around an
+       ;; auto-updating embark collect buffer
+       :hook
+       (embark-collect-mode . consult-preview-at-point-mode))
+    #+end_src
 
 * Delete Selection Mode
 
@@ -373,7 +424,13 @@
 
 * Keybindings
 
-Remap Escape key to Ctrl-L in evil mode
+   #+begin_src emacs-lisp
+     (define-key evil-normal-state-map (kbd "C-f") 'consult-line)
+     (define-key evil-normal-state-map (kbd "C-S-f") 'consult-ripgrep)
+     (define-key evil-normal-state-map (kbd "C-.") 'embark-act)
+   #+end_src
+
+** Remap Escape key to Ctrl-L in evil mode
 
    #+begin_src emacs-lisp
      ;; (define-key evil-insert-state-map (kbd "C-l") 'evil-normal-state)
@@ -403,7 +460,7 @@ Remap Escape key to Ctrl-L in evil mode
    #+begin_src emacs-lisp
      (nvmap :states '(normal visual) :keymaps 'override :prefix "SPC"
        ;; "b b" '(ibuffer :which-key "Ibuffer")
-       "b b" '(switch-to-buffer :whick-key "Switch to buffer")
+       "b b" '(consult-buffer :whick-key "Switch to buffer")
        "b c" '(clone-indirect-buffer-other-window :which-key "Clone indirect buffer other window")
        "b k" '(kill-current-buffer :whick-key "Kill current buffer")
        "b n" '(next-buffer :which-key "Next buffer")
@@ -459,3 +516,9 @@ Remap Escape key to Ctrl-L in evil mode
 	    "w <right>" '(winner-redo :which-key "Winner redo"))
    #+end_src
 
+** Some help bindings 
+
+   #+begin_src emacs-lisp
+     (nvmap :states '(normal visual) :keymaps 'override :prefix "SPC"
+       "h b" '(embark-bindings :which-key "Show key bindings"))
+   #+end_src
