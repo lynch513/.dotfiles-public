@@ -35,7 +35,7 @@
 	:config
 	(general-evil-setup t))
       (nvmap :keymaps 'override :prefix "SPC"
-	"SPC"   '(counsel-M-x :which-key "M-x")
+	;; "SPC"   '(counsel-M-x :which-key "M-x")
 	"c c"   '(compile :which-key "Compile")
 	"c C"   '(recompile :which-key "Recompile")
 	"h r r" '((lambda () (interactive) (load-file "~/.emacs.d/init.el")) :which-key "Reload emacs config")
@@ -43,7 +43,7 @@
       (nvmap :keymaps 'override :prefix "SPC"
 	"m *"   '(org-ctrl-c-star :which-key "Org-ctrl-c-star")
 	"m +"   '(org-ctrl-c-minus :which-key "Org-ctrl-c-minus")
-	"m ."   '(counsel-org-goto :which-key "Counsel org goto")
+	;; "m ."   '(counsel-org-goto :which-key "Counsel org goto")
 	"m e"   '(org-export-dispatch :which-key "Org export dispatch")
 	"m f"   '(org-footnote-new :which-key "Org footnote new")
 	"m h"   '(org-toggle-heading :which-key "Org toggle heading")
@@ -122,6 +122,12 @@
 
    #+begin_src emacs-lisp
      ;;(use-package undo-fu)
+   #+end_src
+
+* Autopair mode
+
+   #+begin_src emacs-lisp
+     (electric-pair-mode)
    #+end_src
 
 * Scrolling
@@ -358,7 +364,8 @@ Some UI. See: consult-line, consult-imenu end others commands
    #+begin_src emacs-lisp
      (use-package consult
        :init
-       (setq completion-in-region-function #'consult-completion-in-region))
+       (setq completion-in-region-function #'consult-completion-in-region)
+       (setq recentf-mode t))
    #+end_src
 
 ** Embark
@@ -486,7 +493,7 @@ Simple press Ctrl-. for default action on target
      (nvmap :states '(normal visual) :keymaps 'override :prefix "SPC"
        "." '(find-file :which-key "Find file")
        "f f" '(find-file :which-key "Find file")
-       "f r" '(counsel-recentf :which-key "Recent files")
+       "f r" '(consult-recent-file :which-key "Recent files")
        "f s" '(save-buffer :which-key "Save file")
        "f y" '(dt/show-and-copy-buffer-path :which-key "Yank file path")
        "f C" '(copy-file :which-key "Copy file")
@@ -522,3 +529,17 @@ Simple press Ctrl-. for default action on target
      (nvmap :states '(normal visual) :keymaps 'override :prefix "SPC"
        "h b" '(embark-bindings :which-key "Show key bindings"))
    #+end_src
+
+* Windows specific settings
+
+   #+begin_src emacs-lisp
+     (setq find-program "C:\\Program Files\\Git\\usr\\bin\\find.exe")
+   #+end_src
+
+* Programming languages
+
+   #+begin_src emacs-lisp
+     (use-package clojure-mode)
+   #+end_src
+
+
