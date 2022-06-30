@@ -30,9 +30,12 @@
 
 * Spaces vs Tabs
 
+Use spaces instead of tabs
+
 #+begin_src emacs-lisp
   (setq-default indent-tabs-mode nil)
 #+end_src
+
 
 * General Keybindings
 
@@ -47,7 +50,7 @@
     "h r r" '((lambda () (interactive) (load-file "~/.emacs.d/init.el")) :which-key "Reload emacs config")
     "t t"   '(toggle-truncate-lines :which-key "Toggle truncate lines")
     "t i"   '(highlight-indent-guides-mode :which-key "Highlight indents")
-    "t w"   '(global-whitespace-mode :which-key "Show tabs and spaces"))
+    "t w"   '(whitespace-mode :which-key "Show tabs and spaces"))
   (nvmap :keymaps 'override :prefix "SPC"
     "m *"   '(org-ctrl-c-star :which-key "Org-ctrl-c-star")
     "m +"   '(org-ctrl-c-minus :which-key "Org-ctrl-c-minus")
@@ -544,7 +547,7 @@ Simple press Ctrl-. for default action on target
   (setq find-program "C:\\Program Files\\Git\\usr\\bin\\find.exe")
 #+end_src
 
-* Highlight indentation and whitespaces
+* Highlight indentation
 
 #+begin_src emacs-lisp
   (use-package highlight-indent-guides
@@ -553,8 +556,25 @@ Simple press Ctrl-. for default action on target
   (add-hook 'nxml-mode-hook 'highlight-indent-guides-mode)
 #+end_src
 
+* Highlight tabs and spaces
+
+Show trailing whitespace and tabs
+
 #+begin_src emacs-lisp
-  (add-hook 'prog-mode-hook 'whitespace-mode)
+  ;; (setq whitespace-style '(face tabs tab-mark trailing))
+  ;; (whitespace-mode)
+  ;; (setq show-trailing-whitespace t)
+#+end_src
+
+Draw tabs with the same color as trailing whitespace
+
+#+begin_src emacs-lisp
+  (add-hook 'font-lock-mode-hook
+            (lambda ()
+              (setq show-trailing-whitespace t)
+              (font-lock-add-keywords
+               nil
+               '(("\t" 0 'trailing-whitespace prepend)))))
 #+end_src
 
 * Programming languages
@@ -562,5 +582,4 @@ Simple press Ctrl-. for default action on target
 #+begin_src emacs-lisp
   (use-package clojure-mode)
 #+end_src
-
 
